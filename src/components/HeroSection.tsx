@@ -1,10 +1,26 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, MapPin, User, ShoppingBag } from 'lucide-react';
 
 const HeroSection = () => {
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedProfile, setSelectedProfile] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = () => {
+    console.log('Searching with:', { selectedLocation, selectedProfile, selectedCategory, searchQuery });
+    // Here you would implement the actual search functionality
+  };
+
+  const popularSearches = [
+    'Temple priests', 'Wedding halls', 'Food delivery', 'Auto drivers', 'Tamil tutors',
+    'Silk saree shops', 'Home cleaning', 'Ayurvedic doctors', 'Photography services'
+  ];
+
   return (
     <section className="bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50 py-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23f97316%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
@@ -29,7 +45,7 @@ const HeroSection = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center mb-12">
           <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg">
-            <div className="text-2xl font-bold text-primary">2000+</div>
+            <div className="text-2xl font-bold text-primary">2500+</div>
             <div className="text-sm text-muted-foreground">Verified Service Providers</div>
           </div>
           <div className="bg-white/80 backdrop-blur-sm p-4 rounded-lg">
@@ -54,8 +70,11 @@ const HeroSection = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Location in Madurai</label>
-              <Select>
+              <label className="block text-sm font-medium text-foreground mb-2 flex items-center space-x-2">
+                <MapPin className="h-4 w-4" />
+                <span>Location in Madurai</span>
+              </label>
+              <Select value={selectedLocation} onValueChange={setSelectedLocation}>
                 <SelectTrigger className="h-12">
                   <SelectValue placeholder="Select Your Area" />
                 </SelectTrigger>
@@ -75,8 +94,11 @@ const HeroSection = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Who Are You?</label>
-              <Select>
+              <label className="block text-sm font-medium text-foreground mb-2 flex items-center space-x-2">
+                <User className="h-4 w-4" />
+                <span>Who Are You?</span>
+              </label>
+              <Select value={selectedProfile} onValueChange={setSelectedProfile}>
                 <SelectTrigger className="h-12">
                   <SelectValue placeholder="Select Profile" />
                 </SelectTrigger>
@@ -94,8 +116,11 @@ const HeroSection = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Service Category</label>
-              <Select>
+              <label className="block text-sm font-medium text-foreground mb-2 flex items-center space-x-2">
+                <ShoppingBag className="h-4 w-4" />
+                <span>Service Category</span>
+              </label>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className="h-12">
                   <SelectValue placeholder="What do you need?" />
                 </SelectTrigger>
@@ -113,10 +138,18 @@ const HeroSection = () => {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Search Services</label>
+              <label className="block text-sm font-medium text-foreground mb-2 flex items-center space-x-2">
+                <Search className="h-4 w-4" />
+                <span>Search Services</span>
+              </label>
               <div className="relative">
-                <Input placeholder="E.g., Silk saree shops, Temple guides..." className="h-12 pr-12" />
-                <Button size="icon" className="absolute right-1 top-1 h-10 w-10">
+                <Input 
+                  placeholder="E.g., Silk saree shops, Temple guides..." 
+                  className="h-12 pr-12" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Button size="icon" className="absolute right-1 top-1 h-10 w-10" onClick={handleSearch}>
                   <Search className="h-4 w-4" />
                 </Button>
               </div>
@@ -125,15 +158,21 @@ const HeroSection = () => {
           
           <div className="mt-6 flex flex-wrap gap-2 justify-center">
             <span className="text-sm text-muted-foreground">Popular searches:</span>
-            <button className="text-sm text-primary hover:underline">Temple priests</button>
-            <span className="text-muted-foreground">•</span>
-            <button className="text-sm text-primary hover:underline">Wedding halls</button>
-            <span className="text-muted-foreground">•</span>
-            <button className="text-sm text-primary hover:underline">Food delivery</button>
-            <span className="text-muted-foreground">•</span>
-            <button className="text-sm text-primary hover:underline">Auto drivers</button>
-            <span className="text-muted-foreground">•</span>
-            <button className="text-sm text-primary hover:underline">Tamil tutors</button>
+            {popularSearches.map((search, index) => (
+              <button 
+                key={index}
+                className="text-sm text-primary hover:underline cursor-pointer"
+                onClick={() => setSearchQuery(search)}
+              >
+                {search}
+              </button>
+            )).slice(0, 5).reduce((acc, curr, index) => {
+              if (index > 0) {
+                acc.push(<span key={`sep-${index}`} className="text-muted-foreground">•</span>);
+              }
+              acc.push(curr);
+              return acc;
+            }, [] as React.ReactNode[])}
           </div>
         </div>
       </div>
