@@ -5,9 +5,12 @@ import { Search, Menu, X, Phone, Mail, MapPin, User, LogOut } from 'lucide-react
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import AuthModal from './AuthModal';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const location = useLocation();
   const { user, signOut, loading } = useAuth();
 
@@ -19,6 +22,11 @@ const Header = () => {
 
   const handleSignOut = async () => {
     await signOut();
+  };
+
+  const openAuthModal = (mode: 'login' | 'signup') => {
+    setAuthMode(mode);
+    setIsAuthModalOpen(true);
   };
 
   return (
@@ -104,35 +112,55 @@ const Header = () => {
             
             <div className="flex items-center space-x-4">
               <Link to="/list-business">
-                <Button variant="outline" className="hidden sm:flex">List Your Business</Button>
+                <Button variant="outline" className="hidden sm:flex hover:bg-primary hover:text-primary-foreground transition-colors">
+                  List Your Business
+                </Button>
               </Link>
               
               {loading ? (
-                <div className="text-sm text-muted-foreground">Loading...</div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                  <span className="text-sm text-muted-foreground">Loading...</span>
+                </div>
               ) : user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="flex items-center space-x-2">
+                    <Button variant="outline" className="flex items-center space-x-2 hover:bg-primary hover:text-primary-foreground transition-colors">
                       <User className="h-4 w-4" />
-                      <span className="hidden sm:inline">{user.email}</span>
+                      <span className="hidden sm:inline max-w-[150px] truncate">
+                        {user.user_metadata?.full_name || user.email}
+                      </span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={handleSignOut} className="flex items-center space-x-2">
+                  <DropdownMenuContent align="end" className="w-56">
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                      Signed in as {user.email}
+                    </div>
+                    <DropdownMenuItem 
+                      onClick={handleSignOut} 
+                      className="flex items-center space-x-2 text-red-600 focus:text-red-600"
+                    >
                       <LogOut className="h-4 w-4" />
                       <span>Sign Out</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <>
-                  <Link to="/login">
-                    <Button variant="outline">Login</Button>
-                  </Link>
-                  <Link to="/signup">
-                    <Button>Sign Up</Button>
-                  </Link>
-                </>
+                <div className="flex items-center space-x-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => openAuthModal('login')}
+                    className="hover:bg-primary hover:text-primary-foreground transition-colors"
+                  >
+                    Login
+                  </Button>
+                  <Button 
+                    onClick={() => openAuthModal('signup')}
+                    className="bg-primary hover:bg-primary/90 transition-colors"
+                  >
+                    Sign Up
+                  </Button>
+                </div>
               )}
               
               <Button 
@@ -148,7 +176,7 @@ const Header = () => {
 
           {/* Mobile menu */}
           {isMenuOpen && (
-            <div className="md:hidden border-t bg-white py-4">
+            <div className="md:hidden border-t bg-white py-4 shadow-lg">
               <nav className="flex flex-col space-y-4">
                 <Link 
                   to="/" 
@@ -200,25 +228,43 @@ const Header = () => {
                     <Button variant="outline" className="w-full mb-2">List Your Business</Button>
                   </Link>
                   {user ? (
-                    <Button 
-                      onClick={() => {
-                        handleSignOut();
-                        setIsMenuOpen(false);
-                      }} 
-                      variant="outline" 
-                      className="w-full flex items-center space-x-2"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Sign Out</span>
-                    </Button>
+                    <div className="space-y-2">
+                      <div className="text-sm text-muted-foreground">
+                        Signed in as {user.email}
+                      </div>
+                      <Button 
+                        onClick={() => {
+                          handleSignOut();
+                          setIsMenuOpen(false);
+                        }} 
+                        variant="outline" 
+                        className="w-full flex items-center space-x-2 text-red-600"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>Sign Out</span>
+                      </Button>
+                    </div>
                   ) : (
                     <div className="space-y-2">
-                      <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                        <Button variant="outline" className="w-full">Login</Button>
-                      </Link>
-                      <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
-                        <Button className="w-full">Sign Up</Button>
-                      </Link>
+                      <Button 
+                        onClick={() => {
+                          openAuthModal('login');
+                          setIsMenuOpen(false);
+                        }}
+                        variant="outline" 
+                        className="w-full"
+                      >
+                        Login
+                      </Button>
+                      <Button 
+                        onClick={() => {
+                          openAuthModal('signup');
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full"
+                      >
+                        Sign Up
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -227,6 +273,12 @@ const Header = () => {
           )}
         </div>
       </header>
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)}
+        defaultMode={authMode}
+      />
     </>
   );
 };
