@@ -3,140 +3,175 @@ import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Award, Shield, Heart, MapPin, Clock } from 'lucide-react';
+import { Heart, Users, Star, Trophy, Target, Eye, Zap, Shield } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const About = () => {
   const stats = [
-    { number: '10,000+', label: 'Verified Businesses', icon: Shield },
+    { number: '2,500+', label: 'Verified Businesses', icon: Trophy },
     { number: '50,000+', label: 'Happy Customers', icon: Users },
-    { number: '25+', label: 'Service Categories', icon: Award },
-    { number: '24/7', label: 'Support Available', icon: Clock }
+    { number: '15+', label: 'Areas Covered', icon: Target },
+    { number: '4.8/5', label: 'Average Rating', icon: Star }
   ];
 
   const values = [
     {
       icon: Heart,
       title: 'Community First',
-      description: 'We believe in strengthening the Madurai community by connecting locals with trusted service providers.'
+      description: 'We believe in strengthening Madurai\'s local business ecosystem and fostering community connections.'
     },
     {
       icon: Shield,
-      title: 'Trust & Safety',
-      description: 'Every business on our platform is verified to ensure you get reliable, quality services every time.'
+      title: 'Trust & Reliability',
+      description: 'Every business is verified to ensure our users connect with genuine, quality service providers.'
     },
     {
-      icon: Award,
-      title: 'Excellence',
-      description: 'We partner only with the best service providers who maintain high standards and customer satisfaction.'
+      icon: Zap,
+      title: 'Innovation',
+      description: 'Bringing traditional Madurai businesses into the digital age with modern technology solutions.'
     },
     {
-      icon: MapPin,
-      title: 'Local Focus',
-      description: 'Born in Madurai, for Madurai. We understand the unique needs of our temple city and its people.'
+      icon: Eye,
+      title: 'Transparency',
+      description: 'Honest reviews, clear pricing, and authentic business information for informed decisions.'
+    }
+  ];
+
+  const team = [
+    {
+      name: 'Rajesh Kumar',
+      role: 'Founder & CEO',
+      description: 'Native Madurai entrepreneur with 15+ years in tech and local business development.',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop'
+    },
+    {
+      name: 'Priya Selvam',
+      role: 'Head of Operations',
+      description: 'Expert in local business networks with deep understanding of Madurai\'s commercial landscape.',
+      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop'
+    },
+    {
+      name: 'Arun Murugan',
+      role: 'Technology Lead',
+      description: 'Full-stack developer passionate about creating user-friendly digital solutions.',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop'
     }
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main>
+      
+      <main className="pt-8">
         {/* Hero Section */}
-        <section className="py-24 bg-gradient-to-br from-primary/10 via-secondary/5 to-background">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <Badge className="mb-4">About Madurai Hub</Badge>
-              <h1 className="text-5xl font-bold text-foreground mb-6">
-                Connecting Madurai's
-                <span className="text-primary block">Heritage with Innovation</span>
-              </h1>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-                Since 2020, we've been the bridge between Madurai's rich cultural heritage and modern digital convenience,
-                helping thousands discover and connect with trusted local service providers.
-              </p>
-            </div>
+        <section className="py-16 bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              About Madurai Hub
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
+              We're on a mission to digitally empower Madurai's vibrant business community. 
+              From the historic Meenakshi Temple vicinity to modern residential areas, 
+              we connect local businesses with customers who value quality and authenticity.
+            </p>
           </div>
         </section>
 
         {/* Stats Section */}
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {stats.map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-2xl mb-4">
-                    <stat.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <div className="text-3xl font-bold text-foreground mb-2">{stat.number}</div>
-                  <div className="text-muted-foreground">{stat.label}</div>
-                </div>
+                <Card key={index} className="text-center hover:shadow-lg transition-shadow border-0 shadow-md">
+                  <CardContent className="p-6">
+                    <stat.icon className="h-12 w-12 text-primary mx-auto mb-4" />
+                    <div className="text-3xl font-bold text-primary mb-2">{stat.number}</div>
+                    <div className="text-muted-foreground font-medium">{stat.label}</div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
         </section>
 
         {/* Story Section */}
-        <section className="py-24 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              <div>
-                <h2 className="text-4xl font-bold text-foreground mb-6">Our Story</h2>
-                <div className="space-y-6 text-muted-foreground leading-relaxed">
-                  <p>
-                    Born in the heart of Madurai, we recognized the challenge locals faced in finding reliable,
-                    quality service providers in our beloved temple city. While Madurai boasts incredible craftsmanship
-                    and traditional services, connecting with the right provider was often a matter of word-of-mouth.
-                  </p>
-                  <p>
-                    We created Madurai Hub to bridge this gap, combining our city's rich heritage of quality service
-                    with modern digital convenience. Our platform celebrates local businesses while making them
-                    easily discoverable to those who need them.
-                  </p>
-                  <p>
-                    Today, we're proud to be Madurai's most trusted platform for local services, fostering connections
-                    that strengthen our community and support local economic growth.
-                  </p>
-                </div>
-              </div>
-              <div className="relative">
-                <img
-                  src="https://images.unsplash.com/photo-1583391265426-32eca8cbc4a0?w=600&h=400&fit=crop"
-                  alt="Madurai Temple"
-                  className="w-full h-80 object-cover rounded-2xl shadow-xl"
-                />
-                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-primary/10 rounded-2xl"></div>
-                <div className="absolute -top-6 -right-6 w-24 h-24 bg-secondary/20 rounded-full"></div>
-              </div>
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-foreground mb-6">Our Story</h2>
+            </div>
+            
+            <div className="prose prose-lg mx-auto text-center">
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Born from a deep love for Madurai's rich cultural heritage and entrepreneurial spirit, 
+                Madurai Hub emerged in 2024 as the city's premier digital marketplace. We recognized 
+                that while Madurai is steeped in tradition, its businesses needed a modern platform 
+                to reach customers in the digital age.
+              </p>
+              
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                What started as a simple directory has evolved into a comprehensive ecosystem where 
+                traditional silk saree shops sit alongside modern tech startups, where temple priests 
+                connect with spiritual seekers, and where family-run restaurants reach food lovers 
+                across the city.
+              </p>
+              
+              <p className="text-muted-foreground leading-relaxed">
+                Today, we're proud to serve as the bridge between Madurai's timeless values and 
+                contemporary convenience, helping businesses grow while preserving the personal 
+                touch that makes our city special.
+              </p>
             </div>
           </div>
         </section>
 
         {/* Values Section */}
-        <section className="py-24 bg-white">
+        <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-foreground mb-6">Our Values</h2>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                These core values guide everything we do and shape how we serve the Madurai community.
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-foreground mb-4">Our Values</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                These core values guide everything we do and shape how we serve the Madurai community
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {values.map((value, index) => (
-                <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-                  <CardContent className="p-8">
-                    <div className="flex items-start space-x-4">
-                      <div className="flex-shrink-0">
-                        <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-xl">
-                          <value.icon className="h-6 w-6 text-primary" />
-                        </div>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold text-foreground mb-3">{value.title}</h3>
-                        <p className="text-muted-foreground leading-relaxed">{value.description}</p>
-                      </div>
-                    </div>
+                <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <value.icon className="h-12 w-12 text-primary mx-auto mb-4" />
+                    <h3 className="font-bold text-lg mb-3">{value.title}</h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{value.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Team Section */}
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-foreground mb-4">Meet Our Team</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Passionate locals working to make Madurai's business ecosystem thrive in the digital era
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {team.map((member, index) => (
+                <Card key={index} className="text-center hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <img 
+                      src={member.image} 
+                      alt={member.name}
+                      className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
+                    />
+                    <h3 className="font-bold text-lg mb-1">{member.name}</h3>
+                    <p className="text-primary font-medium mb-3">{member.role}</p>
+                    <p className="text-muted-foreground text-sm leading-relaxed">{member.description}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -145,25 +180,30 @@ const About = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-24 bg-gradient-to-r from-primary to-secondary">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-4xl font-bold text-primary-foreground mb-6">
-              Ready to Join Our Community?
-            </h2>
-            <p className="text-xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
-              Whether you're looking for services or want to grow your business, Madurai Hub is here to help.
+        <section className="py-16 bg-primary text-primary-foreground">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl font-bold mb-4">Ready to Join the Madurai Hub Community?</h2>
+            <p className="text-xl mb-8 opacity-90">
+              Whether you're a business owner looking to grow or a customer seeking quality services, 
+              we're here to help you succeed in Madurai.
             </p>
+            
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="secondary" size="lg" className="bg-white text-primary hover:bg-gray-100">
-                Find Services
-              </Button>
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-primary">
-                List Your Business
-              </Button>
+              <Link to="/list-business">
+                <Button variant="secondary" size="lg" className="w-full sm:w-auto">
+                  List Your Business
+                </Button>
+              </Link>
+              <Link to="/businesses">
+                <Button variant="outline" size="lg" className="w-full sm:w-auto bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+                  Explore Businesses
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
       </main>
+      
       <Footer />
     </div>
   );

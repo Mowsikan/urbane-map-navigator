@@ -3,17 +3,25 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Search, MapPin, User, ShoppingBag, Sparkles } from 'lucide-react';
+import { Search, MapPin, User, ShoppingBag } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const HeroSection = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedProfile, setSelectedProfile] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   const handleSearch = () => {
-    console.log('Searching with:', { selectedLocation, selectedProfile, selectedCategory, searchQuery });
-    // Here you would implement the actual search functionality
+    let searchParams = new URLSearchParams();
+    
+    if (selectedLocation) searchParams.append('area', selectedLocation);
+    if (selectedCategory) searchParams.append('category', selectedCategory);
+    if (searchQuery) searchParams.append('search', searchQuery);
+    
+    const queryString = searchParams.toString();
+    navigate(`/businesses${queryString ? `?${queryString}` : ''}`);
   };
 
   const popularSearches = [
@@ -148,6 +156,7 @@ const HeroSection = () => {
                   className="h-12 pr-12" 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <Button size="icon" className="absolute right-1 top-1 h-10 w-10" onClick={handleSearch}>
                   <Search className="h-4 w-4" />
@@ -158,21 +167,17 @@ const HeroSection = () => {
           
           <div className="mt-6 flex flex-wrap gap-2 justify-center">
             <span className="text-sm text-muted-foreground">Popular searches:</span>
-            {popularSearches.map((search, index) => (
-              <button 
-                key={index}
-                className="text-sm text-primary hover:underline cursor-pointer"
-                onClick={() => setSearchQuery(search)}
-              >
-                {search}
-              </button>
-            )).slice(0, 5).reduce((acc, curr, index) => {
-              if (index > 0) {
-                acc.push(<span key={`sep-${index}`} className="text-muted-foreground">•</span>);
-              }
-              acc.push(curr);
-              return acc;
-            }, [] as React.ReactNode[])}
+            {popularSearches.slice(0, 5).map((search, index) => (
+              <React.Fragment key={index}>
+                {index > 0 && <span className="text-muted-foreground">•</span>}
+                <button 
+                  className="text-sm text-primary hover:underline cursor-pointer"
+                  onClick={() => setSearchQuery(search)}
+                >
+                  {search}
+                </button>
+              </React.Fragment>
+            ))}
           </div>
         </div>
       </div>

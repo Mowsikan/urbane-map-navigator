@@ -1,89 +1,101 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { User, Mail, Lock, Phone, MapPin, Eye, EyeOff } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    fullName: '',
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    userType: '',
+    area: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const areas = [
+    'Meenakshi Temple Area', 'Anna Nagar', 'SS Colony', 'KK Nagar', 
+    'Tallakulam', 'Thirunagar', 'Vilangudi', 'Pasumalai', 'Mattuthavani',
+    'Teppakulam', 'Alagar Kovil Road', 'Other'
+  ];
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate signup process
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log('Signup attempt:', formData);
-      // Here you would typically handle the actual signup
-    }, 1000);
-  };
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Password Mismatch",
+        description: "Passwords do not match. Please try again.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // Simulate signup process
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    toast({
+      title: "Account Created Successfully!",
+      description: "Welcome to Madurai Hub. Please check your email for verification.",
+    });
+
+    navigate('/login');
+    setIsLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-8">
-        <section className="py-16 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
-          <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-            <Card className="shadow-xl">
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl font-bold">Join Madurai Hub</CardTitle>
-                <p className="text-muted-foreground">
-                  Create your account to connect with local services
-                </p>
-              </CardHeader>
-              
-              <CardContent className="space-y-6">
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="firstName"
-                          placeholder="First name"
-                          value={formData.firstName}
-                          onChange={(e) => handleInputChange('firstName', e.target.value)}
-                          className="pl-10"
-                          required
-                        />
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Last Name</Label>
+      <main className="pt-8 pb-16">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-foreground mb-2">Join Madurai Hub</h1>
+            <p className="text-muted-foreground">Create your account and start exploring Madurai</p>
+          </div>
+
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-center">Create Account</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName">Full Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
-                        id="lastName"
-                        placeholder="Last name"
-                        value={formData.lastName}
-                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        id="fullName"
+                        placeholder="Enter your full name"
+                        value={formData.fullName}
+                        onChange={(e) => handleInputChange('fullName', e.target.value)}
+                        className="pl-10"
                         required
                       />
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="email">Email Address</Label>
                     <div className="relative">
@@ -99,7 +111,9 @@ const Signup = () => {
                       />
                     </div>
                   </div>
-                  
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="phone">Phone Number</Label>
                     <div className="relative">
@@ -107,7 +121,7 @@ const Signup = () => {
                       <Input
                         id="phone"
                         type="tel"
-                        placeholder="Enter your phone number"
+                        placeholder="+91 XXXXX XXXXX"
                         value={formData.phone}
                         onChange={(e) => handleInputChange('phone', e.target.value)}
                         className="pl-10"
@@ -115,15 +129,49 @@ const Signup = () => {
                       />
                     </div>
                   </div>
-                  
+
+                  <div className="space-y-2">
+                    <Label htmlFor="userType">I am a</Label>
+                    <Select value={formData.userType} onValueChange={(value) => handleInputChange('userType', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select user type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="customer">Customer</SelectItem>
+                        <SelectItem value="business-owner">Business Owner</SelectItem>
+                        <SelectItem value="service-provider">Service Provider</SelectItem>
+                        <SelectItem value="tourist">Tourist/Visitor</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="area">Area in Madurai</Label>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
+                    <Select value={formData.area} onValueChange={(value) => handleInputChange('area', value)}>
+                      <SelectTrigger className="pl-10">
+                        <SelectValue placeholder="Select your area" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {areas.map((area) => (
+                          <SelectItem key={area} value={area}>{area}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="password">Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Create a password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Create password"
                         value={formData.password}
                         onChange={(e) => handleInputChange('password', e.target.value)}
                         className="pl-10 pr-10"
@@ -138,15 +186,15 @@ const Signup = () => {
                       </button>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">Confirm Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="confirmPassword"
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        placeholder="Confirm your password"
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm password"
                         value={formData.confirmPassword}
                         onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                         className="pl-10 pr-10"
@@ -161,49 +209,41 @@ const Signup = () => {
                       </button>
                     </div>
                   </div>
-                  
-                  <div className="flex items-start space-x-2 text-sm">
-                    <input type="checkbox" className="mt-1 rounded" required />
-                    <span className="text-muted-foreground">
-                      I agree to the{' '}
-                      <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>
-                      {' '}and{' '}
-                      <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
-                    </span>
-                  </div>
-                  
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? 'Creating Account...' : 'Create Account'}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </form>
-                
-                <div className="relative">
-                  <Separator />
-                  <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-sm text-muted-foreground">
-                    or
-                  </span>
                 </div>
-                
-                <div className="space-y-3">
-                  <Button variant="outline" className="w-full">
-                    Continue with Google
-                  </Button>
-                  <Button variant="outline" className="w-full">
-                    Continue with Facebook
-                  </Button>
+
+                <div className="flex items-start space-x-2">
+                  <input type="checkbox" id="terms" className="mt-1 rounded" required />
+                  <Label htmlFor="terms" className="text-sm leading-relaxed">
+                    I agree to the{' '}
+                    <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>
+                    {' '}and{' '}
+                    <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+                  </Label>
                 </div>
-                
-                <div className="text-center text-sm">
-                  <span className="text-muted-foreground">Already have an account? </span>
+
+                <div className="flex items-start space-x-2">
+                  <input type="checkbox" id="newsletter" className="mt-1 rounded" />
+                  <Label htmlFor="newsletter" className="text-sm">
+                    Send me updates about new businesses and services in my area
+                  </Label>
+                </div>
+
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Creating Account..." : "Create Account"}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <p className="text-muted-foreground">
+                  Already have an account?{' '}
                   <Link to="/login" className="text-primary hover:underline font-medium">
-                    Sign in
+                    Sign in here
                   </Link>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </main>
       
       <Footer />
