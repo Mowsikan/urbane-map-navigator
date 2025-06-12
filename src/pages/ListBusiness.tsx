@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -9,7 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Building, MapPin, Phone, Mail, Clock, Star, Upload, CheckCircle, Users, TrendingUp } from 'lucide-react';
+import TimePickerInput from '@/components/ui/time-picker-input';
+import { Building, MapPin, Phone, Mail, CheckCircle, Users, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const ListBusiness = () => {
@@ -22,7 +22,9 @@ const ListBusiness = () => {
     phone: '',
     email: '',
     website: '',
-    workingHours: '',
+    openingTime: '',
+    closingTime: '',
+    workingDays: '',
     services: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,7 +97,9 @@ const ListBusiness = () => {
       phone: '',
       email: '',
       website: '',
-      workingHours: '',
+      openingTime: '',
+      closingTime: '',
+      workingDays: '',
       services: ''
     });
   };
@@ -161,6 +165,7 @@ const ListBusiness = () => {
               
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Basic Info Section */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="businessName">Business Name *</Label>
@@ -192,6 +197,7 @@ const ListBusiness = () => {
                     </div>
                   </div>
                   
+                  {/* Description */}
                   <div className="space-y-2">
                     <Label htmlFor="description">Business Description *</Label>
                     <Textarea
@@ -204,6 +210,7 @@ const ListBusiness = () => {
                     />
                   </div>
                   
+                  {/* Address Section */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="address">Business Address *</Label>
@@ -235,6 +242,7 @@ const ListBusiness = () => {
                     </div>
                   </div>
                   
+                  {/* Contact Section */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone Number *</Label>
@@ -269,33 +277,48 @@ const ListBusiness = () => {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="website">Website (Optional)</Label>
-                      <Input
-                        id="website"
-                        placeholder="https://your-website.com"
-                        value={formData.website}
-                        onChange={(e) => handleInputChange('website', e.target.value)}
+                  {/* Website */}
+                  <div className="space-y-2">
+                    <Label htmlFor="website">Website (Optional)</Label>
+                    <Input
+                      id="website"
+                      placeholder="https://your-website.com"
+                      value={formData.website}
+                      onChange={(e) => handleInputChange('website', e.target.value)}
+                    />
+                  </div>
+                  
+                  {/* Working Hours Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold">Working Hours</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <TimePickerInput
+                        label="Opening Time *"
+                        value={formData.openingTime}
+                        onChange={(value) => handleInputChange('openingTime', value)}
+                        id="openingTime"
                       />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="workingHours">Working Hours *</Label>
-                      <div className="relative">
-                        <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <TimePickerInput
+                        label="Closing Time *"
+                        value={formData.closingTime}
+                        onChange={(value) => handleInputChange('closingTime', value)}
+                        id="closingTime"
+                      />
+                      <div className="space-y-2">
+                        <Label htmlFor="workingDays">Working Days *</Label>
                         <Input
-                          id="workingHours"
-                          placeholder="Mon-Sat: 9 AM - 6 PM"
-                          value={formData.workingHours}
-                          onChange={(e) => handleInputChange('workingHours', e.target.value)}
-                          className="pl-10"
+                          id="workingDays"
+                          placeholder="Mon-Sat, Sunday Closed"
+                          value={formData.workingDays}
+                          onChange={(e) => handleInputChange('workingDays', e.target.value)}
+                          className="h-12"
                           required
                         />
                       </div>
                     </div>
                   </div>
                   
+                  {/* Services */}
                   <div className="space-y-2">
                     <Label htmlFor="services">Services Offered</Label>
                     <Textarea
@@ -307,6 +330,7 @@ const ListBusiness = () => {
                     />
                   </div>
                   
+                  {/* Terms checkbox */}
                   <div className="flex items-start space-x-2 text-sm">
                     <input type="checkbox" className="mt-1 rounded" required />
                     <span className="text-muted-foreground">
