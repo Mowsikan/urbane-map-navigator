@@ -52,46 +52,41 @@ const SponsoredAdModal = () => {
 
   const ad = sponsoredAds[currentAd];
 
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-lg font-semibold">
-              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full mr-2">
-                Sponsored
-              </span>
-              {ad.title}
-            </DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleClose}
-              className="h-6 w-6"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        </DialogHeader>
-        
-        <div className="py-4">
-          <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-6 rounded-lg text-center mb-4">
-            <div className="text-2xl font-bold text-primary mb-2">{ad.offer}</div>
-            <h3 className="font-semibold text-lg mb-2">{ad.company}</h3>
-            <p className="text-muted-foreground">{ad.content}</p>
-          </div>
-          
-          <div className="flex gap-2">
-            <Button onClick={handleClose} variant="outline" className="flex-1">
-              Not Interested
-            </Button>
-            <Button onClick={handleClose} className="flex-1">
-              Learn More
-            </Button>
-          </div>
+    <div className="fixed bottom-4 right-4 z-50 max-w-sm">
+      <div className="bg-background border border-border rounded-lg shadow-xl p-4 relative">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+            Sponsored
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleClose}
+            className="h-6 w-6"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+        
+        <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-4 rounded-lg text-center mb-3">
+          <div className="text-lg font-bold text-primary mb-1">{ad.offer}</div>
+          <h3 className="font-semibold text-sm mb-1">{ad.company}</h3>
+          <p className="text-xs text-muted-foreground">{ad.content}</p>
+        </div>
+        
+        <div className="flex gap-2">
+          <Button onClick={handleClose} variant="outline" size="sm" className="flex-1 text-xs">
+            Not Interested
+          </Button>
+          <Button onClick={handleClose} size="sm" className="flex-1 text-xs">
+            Learn More
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };
 

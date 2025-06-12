@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import BookingModal from '@/components/BookingModal';
+import ProviderProfileModal from '@/components/ProviderProfileModal';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,7 @@ const Businesses = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedArea, setSelectedArea] = useState('All Areas');
   const [selectedBusiness, setSelectedBusiness] = useState(null);
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const categories = ['All', 'Wedding Services', 'Home Services', 'Healthcare', 'Education', 'Food & Catering', 'Shopping', 'Professional Services', 'Tourism', 'Automotive', 'Beauty & Wellness'];
 
@@ -35,7 +35,16 @@ const Businesses = () => {
       email: 'meenakshi.catering@gmail.com',
       price: '₹500-1200/person',
       image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&h=200&fit=crop',
-      features: ['Vegetarian & Non-Veg Options', 'Traditional Banana Leaf Service', 'Custom Menu Planning']
+      features: ['Vegetarian & Non-Veg Options', 'Traditional Banana Leaf Service', 'Custom Menu Planning'],
+      address: 'No. 123, East Masi Street, Near Meenakshi Temple, Madurai - 625001',
+      workingHours: 'Mon-Sun: 6:00 AM - 10:00 PM',
+      services: ['Wedding Catering', 'Event Catering', 'Traditional Meals', 'Festival Catering'],
+      description: 'Authentic Tamil Nadu catering service specializing in traditional wedding meals and festival catering with 15+ years of experience.',
+      gallery: [
+        'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&h=150&fit=crop'
+      ]
     },
     {
       name: 'Heritage Home Solutions',
@@ -52,7 +61,16 @@ const Businesses = () => {
       email: 'heritage.homes@gmail.com',
       price: '₹50,000-5,00,000',
       image: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=300&h=200&fit=crop',
-      features: ['3D Design Visualization', 'Vastu Consultation', 'Complete Project Management']
+      features: ['3D Design Visualization', 'Vastu Consultation', 'Complete Project Management'],
+      address: 'No. 456, SS Colony, Madurai - 625010',
+      workingHours: 'Mon-Sat: 9:00 AM - 6:00 PM',
+      services: ['Home Renovation', 'Interior Design', 'Construction', 'Maintenance'],
+      description: 'Professional home renovation and interior design services blending traditional and modern aesthetics.',
+      gallery: [
+        'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=200&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=200&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=150&fit=crop'
+      ]
     },
     {
       name: 'Madurai Temple Tours',
@@ -168,11 +186,11 @@ const Businesses = () => {
 
   const handleBookNow = (business) => {
     setSelectedBusiness(business);
-    setIsBookingModalOpen(true);
+    setIsModalOpen(true);
   };
 
-  const handleCloseBookingModal = () => {
-    setIsBookingModalOpen(false);
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
     setSelectedBusiness(null);
   };
 
@@ -307,7 +325,7 @@ const Businesses = () => {
                       className="w-full"
                       onClick={() => handleBookNow(business)}
                     >
-                      Book Now
+                      Connect & Book
                     </Button>
                   </CardContent>
                 </Card>
@@ -327,10 +345,10 @@ const Businesses = () => {
       
       <Footer />
       
-      <BookingModal 
-        business={selectedBusiness}
-        isOpen={isBookingModalOpen}
-        onClose={handleCloseBookingModal}
+      <ProviderProfileModal 
+        provider={selectedBusiness}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
       />
     </div>
   );
