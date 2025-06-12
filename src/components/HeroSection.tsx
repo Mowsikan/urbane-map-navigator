@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Search, MapPin, User, ShoppingBag } from 'lucide-react';
+import { Search, MapPin, User, ShoppingBag, Sparkles } from 'lucide-react';
 
 const HeroSection = () => {
   const [selectedLocation, setSelectedLocation] = useState('');
