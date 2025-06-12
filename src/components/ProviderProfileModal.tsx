@@ -36,9 +36,9 @@ interface ProviderProfileModalProps {
 const ProviderProfileModal = ({ provider, isOpen, onClose }: ProviderProfileModalProps) => {
   if (!provider) return null;
 
-  const handleBookNow = () => {
-    console.log('Booking provider:', provider.name);
-    // Here you would implement the actual booking functionality
+  const handleConnect = () => {
+    console.log('Connecting with provider:', provider.name);
+    // Here you would implement the actual connect functionality
   };
 
   const handleContactProvider = () => {
@@ -172,14 +172,14 @@ const ProviderProfileModal = ({ provider, isOpen, onClose }: ProviderProfileModa
             
             {/* Action Buttons */}
             <div className="space-y-3">
-              <Button className="w-full" size="lg" onClick={handleBookNow}>
-                <Calendar className="h-4 w-4 mr-2" />
-                Book Now
+              <Button className="w-full" size="lg" onClick={handleConnect}>
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Connect Now
               </Button>
               <div className="grid grid-cols-2 gap-3">
                 <Button variant="outline" onClick={handleContactProvider}>
                   <MessageCircle className="h-4 w-4 mr-2" />
-                  Contact
+                  Message
                 </Button>
                 <Button variant="outline">
                   <Phone className="h-4 w-4 mr-2" />

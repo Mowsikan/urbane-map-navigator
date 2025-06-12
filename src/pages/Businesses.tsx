@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -184,7 +185,7 @@ const Businesses = () => {
     return matchesSearch && matchesCategory && matchesArea;
   });
 
-  const handleBookNow = (business) => {
+  const handleConnect = (business) => {
     setSelectedBusiness(business);
     setIsModalOpen(true);
   };
@@ -323,9 +324,9 @@ const Businesses = () => {
                     
                     <Button 
                       className="w-full"
-                      onClick={() => handleBookNow(business)}
+                      onClick={() => handleConnect(business)}
                     >
-                      Connect & Book
+                      Connect
                     </Button>
                   </CardContent>
                 </Card>
