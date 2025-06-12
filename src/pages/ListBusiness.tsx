@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import AuthModal from '@/components/AuthModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,10 +10,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import TimePickerInput from '@/components/ui/time-picker-input';
-import { Building, MapPin, Phone, Mail, CheckCircle, Users, TrendingUp } from 'lucide-react';
+import { Building, MapPin, Phone, Mail, CheckCircle, Users, TrendingUp, LogIn } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const ListBusiness = () => {
+  const { user, loading } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [formData, setFormData] = useState({
     businessName: '',
     category: '',
@@ -31,9 +36,8 @@ const ListBusiness = () => {
   const { toast } = useToast();
 
   const categories = [
-    'Healthcare', 'Education', 'Home Services', 'Tourism', 'Food & Catering', 
-    'Shopping', 'Professional Services', 'Beauty & Wellness', 'Automotive', 
-    'Technology', 'Construction', 'Real Estate'
+    'Wedding Services', 'Home Services', 'Healthcare', 'Education', 'Food & Catering', 
+    'Shopping', 'Professional Services', 'Tourism', 'Automotive', 'Beauty & Wellness'
   ];
 
   const areas = [
@@ -75,34 +79,112 @@ const ListBusiness = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    toast({
-      title: "Application Submitted Successfully!",
-      description: "We'll review your business listing and get back to you within 24 hours.",
-    });
-    
-    setIsSubmitting(false);
-    
-    // Reset form
-    setFormData({
-      businessName: '',
-      category: '',
-      description: '',
-      address: '',
-      area: '',
-      phone: '',
-      email: '',
-      website: '',
-      openingTime: '',
-      closingTime: '',
-      workingDays: '',
-      services: ''
-    });
+    try {
+      // Get user profile to verify ownership capability
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile) {
+        toast({
+          title: "Profile Error",
+          description: "Please complete your profile first.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Prepare services array
+      const servicesArray = formData.services
+        ? formData.services.split(',').map(s => s.trim()).filter(s => s)
+        : [];
+
+      // Insert business
+      const { data: business, error: businessError } = await supabase
+        .from('businesses')
+        .insert({
+          owner_id: user.id,
+          name: formData.businessName,
+          category: formData.category,
+          description: formData.description,
+          address: formData.address,
+          area: formData.area,
+          phone: formData.phone,
+          email: formData.email,
+          working_hours: `${formData.openingTime} - ${formData.closingTime}, ${formData.workingDays}`,
+        })
+        .select()
+        .single();
+
+      if (businessError) {
+        throw businessError;
+      }
+
+      // Insert services if any
+      if (servicesArray.length > 0 && business) {
+        const serviceInserts = servicesArray.map(service => ({
+          business_id: business.id,
+          service_name: service
+        }));
+
+        const { error: servicesError } = await supabase
+          .from('business_services')
+          .insert(serviceInserts);
+
+        if (servicesError) {
+          console.warn('Services insertion failed:', servicesError);
+        }
+      }
+
+      toast({
+        title: "Business Listed Successfully!",
+        description: "Your business has been submitted for review and will be live within 24 hours.",
+      });
+      
+      // Reset form
+      setFormData({
+        businessName: '',
+        category: '',
+        description: '',
+        address: '',
+        area: '',
+        phone: '',
+        email: '',
+        website: '',
+        openingTime: '',
+        closingTime: '',
+        workingDays: '',
+        services: ''
+      });
+      
+    } catch (error: any) {
+      console.error('Error submitting business:', error);
+      toast({
+        title: "Submission Failed",
+        description: error.message || "There was an error submitting your business. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="text-center">Loading...</div>
+    </div>;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -125,6 +207,25 @@ const ListBusiness = () => {
               <Badge className="bg-blue-500 text-white px-4 py-2">Instant Approval</Badge>
               <Badge className="bg-purple-500 text-white px-4 py-2">24/7 Support</Badge>
             </div>
+
+            {!user && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
+                <div className="flex items-center space-x-2 text-blue-700 mb-2">
+                  <LogIn className="h-5 w-5" />
+                  <span className="font-medium">Login Required</span>
+                </div>
+                <p className="text-sm text-blue-600 mb-3">
+                  Please login or create an account to list your business.
+                </p>
+                <Button 
+                  onClick={() => setShowAuthModal(true)}
+                  size="sm"
+                  className="w-full"
+                >
+                  Login / Sign Up
+                </Button>
+              </div>
+            )}
           </div>
         </section>
 
@@ -343,9 +444,9 @@ const ListBusiness = () => {
                     type="submit" 
                     className="w-full" 
                     size="lg"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !user}
                   >
-                    {isSubmitting ? "Submitting..." : "Submit Business Listing"}
+                    {!user ? "Login Required" : isSubmitting ? "Submitting..." : "Submit Business Listing"}
                   </Button>
                 </form>
               </CardContent>
@@ -379,6 +480,12 @@ const ListBusiness = () => {
       </main>
       
       <Footer />
+      
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        defaultMode="signup"
+      />
     </div>
   );
 };
