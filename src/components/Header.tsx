@@ -62,12 +62,12 @@ const Header = () => {
                 Home
               </Link>
               <Link 
-                to="/services" 
+                to="/businesses" 
                 className={`transition-colors font-medium ${
-                  isActive('/services') ? 'text-primary' : 'text-foreground hover:text-primary'
+                  isActive('/businesses') ? 'text-primary' : 'text-foreground hover:text-primary'
                 }`}
               >
-                Services
+                Businesses
               </Link>
               <Link 
                 to="/areas" 
@@ -76,14 +76,6 @@ const Header = () => {
                 }`}
               >
                 Areas
-              </Link>
-              <Link 
-                to="/providers" 
-                className={`transition-colors font-medium ${
-                  isActive('/providers') ? 'text-primary' : 'text-foreground hover:text-primary'
-                }`}
-              >
-                Providers
               </Link>
               <Link 
                 to="/about" 
@@ -138,13 +130,13 @@ const Header = () => {
                   Home
                 </Link>
                 <Link 
-                  to="/services" 
+                  to="/businesses" 
                   className={`transition-colors font-medium ${
-                    isActive('/services') ? 'text-primary' : 'text-foreground hover:text-primary'
+                    isActive('/businesses') ? 'text-primary' : 'text-foreground hover:text-primary'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Services
+                  Businesses
                 </Link>
                 <Link 
                   to="/areas" 
@@ -154,15 +146,6 @@ const Header = () => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Areas
-                </Link>
-                <Link 
-                  to="/providers" 
-                  className={`transition-colors font-medium ${
-                    isActive('/providers') ? 'text-primary' : 'text-foreground hover:text-primary'
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Providers
                 </Link>
                 <Link 
                   to="/about" 

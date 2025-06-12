@@ -2,8 +2,11 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Users, Building, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const AreasSection = () => {
+  const navigate = useNavigate();
+
   const areas = [
     { 
       name: 'Meenakshi Temple Area', 
@@ -71,6 +74,10 @@ const AreasSection = () => {
     }
   ];
 
+  const handleExploreArea = (areaName: string) => {
+    navigate(`/businesses?area=${encodeURIComponent(areaName)}`);
+  };
+
   return (
     <section className="py-24 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -113,7 +120,10 @@ const AreasSection = () => {
                     <Users className="h-4 w-4 text-primary" />
                     <span className="text-sm font-medium text-foreground">{area.providers} providers</span>
                   </div>
-                  <button className="text-xs text-primary hover:underline font-medium">
+                  <button 
+                    onClick={() => handleExploreArea(area.name)}
+                    className="text-xs text-primary hover:underline font-medium"
+                  >
                     Explore area →
                   </button>
                 </div>

@@ -7,9 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Users, Building, Star, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Areas = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   const areas = [
     { 
@@ -91,6 +93,10 @@ const Areas = () => {
     area.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleViewProviders = (areaName: string) => {
+    navigate(`/businesses?area=${encodeURIComponent(areaName)}`);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -162,8 +168,12 @@ const Areas = () => {
                         <Users className="h-4 w-4 text-primary" />
                         <span className="text-sm font-medium">{area.providers} providers</span>
                       </div>
-                      <Button variant="outline" size="sm">
-                        View Providers
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleViewProviders(area.name)}
+                      >
+                        View Businesses
                       </Button>
                     </div>
                   </CardContent>
