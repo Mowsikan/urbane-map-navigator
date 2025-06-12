@@ -1,266 +1,356 @@
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { MapPin, Phone, Mail, Clock, Star, Search, Filter } from 'lucide-react';
+import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-
-interface Business {
-  id: string;
-  name: string;
-  description: string | null;
-  category: string;
-  area: string;
-  phone: string | null;
-  email: string | null;
-  address: string | null;
-  working_hours: string | null;
-  price_range: string | null;
-  image_url: string | null;
-  rating: number;
-  review_count: number;
-  verified: boolean;
-  speciality: string | null;
-  experience: string | null;
-  response_time: string | null;
-}
+import ProviderProfileModal from '@/components/ProviderProfileModal';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Star, MapPin, Clock, Award, Shield, Search, Filter, Users, Phone, Mail } from 'lucide-react';
 
 const Businesses = () => {
-  const [businesses, setBusinesses] = useState<Business[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedArea, setSelectedArea] = useState('all');
-  const { toast } = useToast();
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedArea, setSelectedArea] = useState('All Areas');
+  const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const categories = [
-    'Wedding Services', 'Home Services', 'Healthcare', 'Education',
-    'Food & Catering', 'Shopping', 'Professional Services', 'Tourism',
-    'Automotive', 'Beauty & Wellness'
-  ];
+  const categories = ['All', 'Wedding Services', 'Home Services', 'Healthcare', 'Education', 'Food & Catering', 'Shopping', 'Professional Services', 'Tourism', 'Automotive', 'Beauty & Wellness'];
 
-  const areas = [
-    'Meenakshi Temple Area', 'Anna Nagar', 'SS Colony', 'KK Nagar', 
-    'Tallakulam', 'Thirunagar', 'Vilangudi', 'Pasumalai', 'Mattuthavani',
-    'Teppakulam', 'Alagar Kovil Road'
-  ];
+  const areas = ['All Areas', 'Meenakshi Temple Area', 'Anna Nagar', 'SS Colony', 'KK Nagar', 'Tallakulam', 'Thirunagar', 'Vilangudi', 'Pasumalai'];
 
-  useEffect(() => {
-    fetchBusinesses();
-  }, []);
-
-  const fetchBusinesses = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('businesses')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching businesses:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load businesses. Please try again.",
-          variant: "destructive"
-        });
-      } else {
-        setBusinesses(data || []);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
+  const businesses = [
+    {
+      name: 'Meenakshi Traditional Catering',
+      category: 'Food & Catering',
+      area: 'Meenakshi Temple Area',
+      rating: 4.9,
+      reviews: 245,
+      location: 'Near Meenakshi Temple, Ward 1',
+      responseTime: '2 hours',
+      speciality: 'Authentic Tamil Nadu wedding cuisine',
+      verified: true,
+      experience: '15+ years',
+      phone: '+91 98765 43210',
+      email: 'meenakshi.catering@gmail.com',
+      price: '₹500-1200/person',
+      image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&h=200&fit=crop',
+      features: ['Vegetarian & Non-Veg Options', 'Traditional Banana Leaf Service', 'Custom Menu Planning'],
+      address: 'No. 123, East Masi Street, Near Meenakshi Temple, Madurai - 625001',
+      workingHours: 'Mon-Sun: 6:00 AM - 10:00 PM',
+      services: ['Wedding Catering', 'Event Catering', 'Traditional Meals', 'Festival Catering'],
+      description: 'Authentic Tamil Nadu catering service specializing in traditional wedding meals and festival catering with 15+ years of experience.',
+      gallery: [
+        'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=200&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&h=150&fit=crop'
+      ]
+    },
+    {
+      name: 'Heritage Home Solutions',
+      category: 'Home Services',
+      area: 'SS Colony',
+      rating: 4.8,
+      reviews: 189,
+      location: 'SS Colony Main Road',
+      responseTime: '30 mins',
+      speciality: 'Traditional & modern interior designs',
+      verified: true,
+      experience: '12+ years',
+      phone: '+91 98765 43211',
+      email: 'heritage.homes@gmail.com',
+      price: '₹50,000-5,00,000',
+      image: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=300&h=200&fit=crop',
+      features: ['3D Design Visualization', 'Vastu Consultation', 'Complete Project Management'],
+      address: 'No. 456, SS Colony, Madurai - 625010',
+      workingHours: 'Mon-Sat: 9:00 AM - 6:00 PM',
+      services: ['Home Renovation', 'Interior Design', 'Construction', 'Maintenance'],
+      description: 'Professional home renovation and interior design services blending traditional and modern aesthetics.',
+      gallery: [
+        'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=200&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=200&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=200&h=150&fit=crop'
+      ]
+    },
+    {
+      name: 'Madurai Temple Tours',
+      category: 'Tourism',
+      area: 'Anna Nagar',
+      rating: 4.9,
+      reviews: 324,
+      location: 'Anna Nagar 2nd Street',
+      responseTime: '1 hour',
+      speciality: 'Cultural & spiritual heritage tours',
+      verified: true,
+      experience: '8+ years',
+      phone: '+91 98765 43212',
+      email: 'temple.tours@gmail.com',
+      price: '₹500-2,000/person',
+      image: 'https://images.unsplash.com/photo-1466442929976-97f336a657be?w=300&h=200&fit=crop',
+      features: ['Expert Local Guides', 'Historical Insights', 'Customized Tours']
+    },
+    {
+      name: 'Tamil Language Academy',
+      category: 'Education',
+      area: 'KK Nagar',
+      rating: 4.7,
+      reviews: 167,
+      location: 'KK Nagar Main Road',
+      responseTime: '45 mins',
+      speciality: 'Traditional Tamil learning & literature',
+      verified: true,
+      experience: '20+ years',
+      phone: '+91 98765 43213',
+      email: 'tamil.academy@gmail.com',
+      price: '₹2,000-8,000/month',
+      image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300&h=200&fit=crop',
+      features: ['Native Tamil Teachers', 'Literature & Poetry', 'Cultural Immersion']
+    },
+    {
+      name: 'Dr. Kumaran Ayurvedic Center',
+      category: 'Healthcare',
+      area: 'Tallakulam',
+      rating: 4.9,
+      reviews: 298,
+      location: 'Tallakulam Hospital Road',
+      responseTime: '24 hours',
+      speciality: 'Traditional Ayurvedic healing',
+      verified: true,
+      experience: '18+ years',
+      phone: '+91 98765 43214',
+      email: 'ayurveda.center@gmail.com',
+      price: '₹1,000-5,000/session',
+      image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=200&fit=crop',
+      features: ['Authentic Treatments', 'Herbal Medicine', 'Personalized Programs']
+    },
+    {
+      name: 'Digital Solutions Pro',
+      category: 'Professional Services',
+      area: 'Thirunagar',
+      rating: 4.6,
+      reviews: 156,
+      location: 'Thirunagar Commercial Complex',
+      responseTime: '1 hour',
+      speciality: 'Web development & digital marketing',
+      verified: true,
+      experience: '10+ years',
+      phone: '+91 98765 43215',
+      email: 'digital.solutions@gmail.com',
+      price: '₹10,000-1,00,000',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=300&h=200&fit=crop',
+      features: ['Custom Web Solutions', 'SEO & Marketing', 'E-commerce Development']
+    },
+    {
+      name: 'Royal Silk Sarees',
+      category: 'Shopping',
+      area: 'Meenakshi Temple Area',
+      rating: 4.8,
+      reviews: 203,
+      location: 'West Masi Street',
+      responseTime: '2 hours',
+      speciality: 'Handwoven Madurai silk sarees',
+      verified: true,
+      experience: '25+ years',
+      phone: '+91 98765 43216',
+      email: 'royal.silks@gmail.com',
+      price: '₹5,000-50,000',
+      image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&h=200&fit=crop',
+      features: ['Handwoven Quality', 'Custom Designs', 'Authentic Silk']
+    },
+    {
+      name: 'Bridal Beauty Parlour',
+      category: 'Beauty & Wellness',
+      area: 'Anna Nagar',
+      rating: 4.7,
+      reviews: 178,
+      location: 'Anna Nagar 4th Cross',
+      responseTime: '3 hours',
+      speciality: 'Bridal makeup & traditional styling',
+      verified: true,
+      experience: '12+ years',
+      phone: '+91 98765 43217',
+      email: 'bridal.beauty@gmail.com',
+      price: '₹3,000-25,000',
+      image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop',
+      features: ['Bridal Packages', 'Traditional Styling', 'Makeup Artist']
     }
-  };
+  ];
 
   const filteredBusinesses = businesses.filter(business => {
     const matchesSearch = business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         business.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         business.area.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || business.category === selectedCategory;
-    const matchesArea = selectedArea === 'all' || business.area === selectedArea;
-    
+                         business.speciality.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'All' || business.category === selectedCategory;
+    const matchesArea = selectedArea === 'All Areas' || business.area === selectedArea;
     return matchesSearch && matchesCategory && matchesArea;
   });
 
+  const handleConnect = (business) => {
+    setSelectedBusiness(business);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedBusiness(null);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Local Businesses in Madurai
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover trusted local businesses across Madurai's vibrant neighborhoods
-          </p>
-        </div>
-
-        {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="md:col-span-2">
+      <main className="pt-8">
+        {/* Hero Section */}
+        <section className="py-16 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+              Trusted Businesses in Madurai
+            </h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              Find verified businesses and service providers across Madurai. All businesses are 
+              vetted for quality and reliability.
+            </p>
+            
+            {/* Search and Filter */}
+            <div className="max-w-4xl mx-auto space-y-4">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search businesses, services, or locations..."
+                  placeholder="Search businesses, services, specialities..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
-            </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Categories" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category}>{category}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedArea} onValueChange={setSelectedArea}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Areas" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Areas</SelectItem>
-                {areas.map((area) => (
-                  <SelectItem key={area} value={area}>{area}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Results */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            {loading ? 'Loading...' : `${filteredBusinesses.length} Businesses Found`}
-          </h2>
-        </div>
-
-        {/* Business Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <Card key={i} className="animate-pulse">
-                <CardHeader>
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="h-3 bg-gray-200 rounded"></div>
-                    <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : filteredBusinesses.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="w-24 h-24 mx-auto mb-4 text-gray-300">
-              <Search className="w-full h-full" />
-            </div>
-            <h3 className="text-xl font-medium text-gray-900 mb-2">No businesses found</h3>
-            <p className="text-gray-600">
-              Try adjusting your search criteria or browse all categories
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredBusinesses.map((business) => (
-              <Card key={business.id} className="hover:shadow-lg transition-shadow duration-200">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-xl mb-1">{business.name}</CardTitle>
-                      <CardDescription className="flex items-center space-x-2">
-                        <Badge variant="secondary">{business.category}</Badge>
-                        {business.verified && (
-                          <Badge variant="default" className="bg-green-100 text-green-800">
-                            Verified
-                          </Badge>
-                        )}
-                      </CardDescription>
-                    </div>
-                    {business.rating > 0 && (
-                      <div className="flex items-center space-x-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">{business.rating.toFixed(1)}</span>
-                        <span className="text-sm text-gray-500">({business.review_count})</span>
-                      </div>
-                    )}
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="space-y-3">
-                  {business.description && (
-                    <p className="text-gray-600 text-sm line-clamp-2">{business.description}</p>
-                  )}
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      <span>{business.area}</span>
-                    </div>
-                    
-                    {business.working_hours && (
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Clock className="h-4 w-4 mr-2" />
-                        <span>{business.working_hours}</span>
-                      </div>
-                    )}
-                    
-                    {business.price_range && (
-                      <div className="text-sm">
-                        <span className="font-medium text-green-600">{business.price_range}</span>
-                      </div>
-                    )}
-                    
-                    {business.speciality && (
-                      <div className="text-sm text-gray-600">
-                        <span className="font-medium">Speciality:</span> {business.speciality}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-                
-                <CardFooter className="flex space-x-2">
-                  {business.phone && (
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Phone className="h-4 w-4 mr-1" />
-                      Call
+              
+              <div className="flex flex-wrap gap-2 justify-center">
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((category) => (
+                    <Button
+                      key={category}
+                      variant={selectedCategory === category ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedCategory(category)}
+                    >
+                      {category}
                     </Button>
-                  )}
-                  <Button size="sm" className="flex-1">
-                    View Details
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap gap-2 justify-center">
+                <div className="flex items-center space-x-2">
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Filter by Area:</span>
+                </div>
+                {areas.map((area) => (
+                  <Button
+                    key={area}
+                    variant={selectedArea === area ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedArea(area)}
+                  >
+                    {area}
                   </Button>
-                </CardFooter>
-              </Card>
-            ))}
+                ))}
+              </div>
+            </div>
           </div>
-        )}
-      </div>
+        </section>
+
+        {/* Businesses Grid */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-8">
+              <p className="text-muted-foreground">
+                Showing {filteredBusinesses.length} businesses
+                {selectedCategory !== 'All' && ` in ${selectedCategory}`}
+                {selectedArea !== 'All Areas' && ` in ${selectedArea}`}
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredBusinesses.map((business, index) => (
+                <Card key={index} className="overflow-hidden hover:shadow-xl transition-all duration-300 group">
+                  <div className="relative">
+                    <img 
+                      src={business.image} 
+                      alt={business.name}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute top-4 left-4">
+                      {business.verified && (
+                        <Badge className="bg-green-500 hover:bg-green-600 text-white">
+                          <Shield className="h-3 w-3 mr-1" />
+                          Verified
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="absolute top-4 right-4">
+                      <Badge variant="secondary">{business.area}</Badge>
+                    </div>
+                  </div>
+                  
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">{business.name}</h3>
+                      <Badge variant="outline">{business.category}</Badge>
+                    </div>
+                    
+                    <p className="text-sm text-primary font-medium mb-3">{business.speciality}</p>
+                    
+                    <div className="flex items-center space-x-1 mb-3">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="font-bold">{business.rating}</span>
+                      <span className="text-muted-foreground">({business.reviews} reviews)</span>
+                    </div>
+                    
+                    <div className="space-y-2 text-sm mb-4">
+                      <div className="flex items-center space-x-2 text-muted-foreground">
+                        <MapPin className="h-4 w-4" />
+                        <span>{business.location}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-muted-foreground">
+                        <Clock className="h-4 w-4" />
+                        <span>Response: {business.responseTime}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-muted-foreground">
+                        <Award className="h-4 w-4" />
+                        <span>Experience: {business.experience}</span>
+                      </div>
+                    </div>
+
+                    <div className="text-primary font-bold mb-4">{business.price}</div>
+                    
+                    <Button 
+                      className="w-full"
+                      onClick={() => handleConnect(business)}
+                    >
+                      Connect
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {filteredBusinesses.length === 0 && (
+              <div className="text-center py-16">
+                <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-foreground mb-2">No businesses found</h3>
+                <p className="text-muted-foreground">Try adjusting your search terms, category, or area filter.</p>
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
       
       <Footer />
+      
+      <ProviderProfileModal 
+        provider={selectedBusiness}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };
