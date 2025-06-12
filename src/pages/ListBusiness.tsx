@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -14,13 +15,16 @@ import { Building, MapPin, Phone, Mail, CheckCircle, Users, TrendingUp, LogIn } 
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
+
+type BusinessCategory = Database['public']['Enums']['business_category'];
 
 const ListBusiness = () => {
   const { user, loading } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [formData, setFormData] = useState({
     businessName: '',
-    category: '',
+    category: '' as BusinessCategory | '',
     description: '',
     address: '',
     area: '',
@@ -35,7 +39,7 @@ const ListBusiness = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const categories = [
+  const categories: BusinessCategory[] = [
     'Wedding Services', 'Home Services', 'Healthcare', 'Education', 'Food & Catering', 
     'Shopping', 'Professional Services', 'Tourism', 'Automotive', 'Beauty & Wellness'
   ];
@@ -84,6 +88,15 @@ const ListBusiness = () => {
       setShowAuthModal(true);
       return;
     }
+
+    if (!formData.category) {
+      toast({
+        title: "Category Required",
+        description: "Please select a business category.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     setIsSubmitting(true);
     
@@ -110,19 +123,19 @@ const ListBusiness = () => {
         ? formData.services.split(',').map(s => s.trim()).filter(s => s)
         : [];
 
-      // Insert business
+      // Insert business with proper typing
       const { data: business, error: businessError } = await supabase
         .from('businesses')
         .insert({
           owner_id: user.id,
           name: formData.businessName,
-          category: formData.category,
+          category: formData.category as BusinessCategory,
           description: formData.description,
           address: formData.address,
           area: formData.area,
           phone: formData.phone,
           email: formData.email,
-          working_hours: `${formData.openingTime} - ${formData.closingTime}, ${formData.workingDays}`,
+          working_hours: `${formData.workingDays}: ${formData.openingTime} - ${formData.closingTime}`,
         })
         .select()
         .single();
