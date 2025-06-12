@@ -1,17 +1,24 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Search, Menu, X, Phone, Mail, MapPin } from 'lucide-react';
+import { Search, Menu, X, Phone, Mail, MapPin, User, LogOut } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut, loading } = useAuth();
 
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
     if (path !== '/' && location.pathname.startsWith(path)) return true;
     return false;
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
   };
 
   return (
@@ -99,12 +106,35 @@ const Header = () => {
               <Link to="/list-business">
                 <Button variant="outline" className="hidden sm:flex">List Your Business</Button>
               </Link>
-              <Link to="/login">
-                <Button variant="outline">Login</Button>
-              </Link>
-              <Link to="/signup">
-                <Button>Sign Up</Button>
-              </Link>
+              
+              {loading ? (
+                <div className="text-sm text-muted-foreground">Loading...</div>
+              ) : user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="flex items-center space-x-2">
+                      <User className="h-4 w-4" />
+                      <span className="hidden sm:inline">{user.email}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={handleSignOut} className="flex items-center space-x-2">
+                      <LogOut className="h-4 w-4" />
+                      <span>Sign Out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button variant="outline">Login</Button>
+                  </Link>
+                  <Link to="/signup">
+                    <Button>Sign Up</Button>
+                  </Link>
+                </>
+              )}
+              
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -169,6 +199,28 @@ const Header = () => {
                   <Link to="/list-business" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="outline" className="w-full mb-2">List Your Business</Button>
                   </Link>
+                  {user ? (
+                    <Button 
+                      onClick={() => {
+                        handleSignOut();
+                        setIsMenuOpen(false);
+                      }} 
+                      variant="outline" 
+                      className="w-full flex items-center space-x-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Sign Out</span>
+                    </Button>
+                  ) : (
+                    <div className="space-y-2">
+                      <Link to="/login" onClick={() => setIsMenuOpen(false)}>
+                        <Button variant="outline" className="w-full">Login</Button>
+                      </Link>
+                      <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
+                        <Button className="w-full">Sign Up</Button>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </nav>
             </div>

@@ -31,6 +31,14 @@ const AuthModal = ({ isOpen, onClose, defaultMode = 'login' }: AuthModalProps) =
     'Teppakulam', 'Alagar Kovil Road'
   ];
 
+  const resetForm = () => {
+    setEmail('');
+    setPassword('');
+    setFullName('');
+    setUserType('customer');
+    setArea('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -44,25 +52,28 @@ const AuthModal = ({ isOpen, onClose, defaultMode = 'login' }: AuthModalProps) =
         });
         
         if (error) {
+          console.error('Signup error:', error);
           toast({
             title: "Signup Error",
-            description: error.message,
+            description: error.message || "Failed to create account. Please try again.",
             variant: "destructive"
           });
         } else {
           toast({
             title: "Account Created!",
-            description: "Please check your email to verify your account."
+            description: "Welcome to Madurai Hub! You can now list your business."
           });
+          resetForm();
           onClose();
         }
       } else {
         const { error } = await signIn(email, password);
         
         if (error) {
+          console.error('Login error:', error);
           toast({
             title: "Login Error",
-            description: error.message,
+            description: error.message || "Invalid credentials. Please try again.",
             variant: "destructive"
           });
         } else {
@@ -70,10 +81,12 @@ const AuthModal = ({ isOpen, onClose, defaultMode = 'login' }: AuthModalProps) =
             title: "Welcome back!",
             description: "You have successfully logged in."
           });
+          resetForm();
           onClose();
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Auth error:', error);
       toast({
         title: "Error",
         description: "Something went wrong. Please try again.",

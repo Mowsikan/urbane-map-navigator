@@ -22,6 +22,15 @@ export const useAuth = () => {
   return context;
 };
 
+// Cleanup function to prevent auth limbo states
+const cleanupAuthState = () => {
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      localStorage.removeItem(key);
+    }
+  });
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -31,6 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -39,6 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -48,6 +59,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const signUp = async (email: string, password: string, userData: any) => {
+    try {
+      // Clean up any existing auth state
+      cleanupAuthState();
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch (err) {
+      // Continue even if cleanup fails
+    }
+
     const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
@@ -62,6 +81,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = async (email: string, password: string) => {
+    try {
+      // Clean up any existing auth state
+      cleanupAuthState();
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch (err) {
+      // Continue even if cleanup fails
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -70,7 +97,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      cleanupAuthState();
+      await supabase.auth.signOut({ scope: 'global' });
+      // Force page reload for clean state
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   const value = {
