@@ -69,18 +69,22 @@ const Header = () => {
               >
                 Services
               </Link>
-              <a 
-                href="#areas" 
-                className="text-foreground hover:text-primary transition-colors font-medium"
+              <Link 
+                to="/areas" 
+                className={`transition-colors font-medium ${
+                  isActive('/areas') ? 'text-primary' : 'text-foreground hover:text-primary'
+                }`}
               >
                 Areas
-              </a>
-              <a 
-                href="#providers" 
-                className="text-foreground hover:text-primary transition-colors font-medium"
+              </Link>
+              <Link 
+                to="/providers" 
+                className={`transition-colors font-medium ${
+                  isActive('/providers') ? 'text-primary' : 'text-foreground hover:text-primary'
+                }`}
               >
                 Providers
-              </a>
+              </Link>
               <Link 
                 to="/about" 
                 className={`transition-colors font-medium ${
@@ -100,9 +104,15 @@ const Header = () => {
             </nav>
             
             <div className="flex items-center space-x-4">
-              <Button variant="outline" className="hidden sm:flex">List Your Business</Button>
-              <Button variant="outline">Login</Button>
-              <Button>Sign Up</Button>
+              <Link to="/list-business">
+                <Button variant="outline" className="hidden sm:flex">List Your Business</Button>
+              </Link>
+              <Link to="/login">
+                <Button variant="outline">Login</Button>
+              </Link>
+              <Link to="/signup">
+                <Button>Sign Up</Button>
+              </Link>
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -136,20 +146,24 @@ const Header = () => {
                 >
                   Services
                 </Link>
-                <a 
-                  href="#areas" 
-                  className="text-foreground hover:text-primary transition-colors font-medium"
+                <Link 
+                  to="/areas" 
+                  className={`transition-colors font-medium ${
+                    isActive('/areas') ? 'text-primary' : 'text-foreground hover:text-primary'
+                  }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Areas
-                </a>
-                <a 
-                  href="#providers" 
-                  className="text-foreground hover:text-primary transition-colors font-medium"
+                </Link>
+                <Link 
+                  to="/providers" 
+                  className={`transition-colors font-medium ${
+                    isActive('/providers') ? 'text-primary' : 'text-foreground hover:text-primary'
+                  }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Providers
-                </a>
+                </Link>
                 <Link 
                   to="/about" 
                   className={`transition-colors font-medium ${
@@ -169,7 +183,9 @@ const Header = () => {
                   Contact
                 </Link>
                 <div className="pt-4 border-t">
-                  <Button variant="outline" className="w-full mb-2">List Your Business</Button>
+                  <Link to="/list-business" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="outline" className="w-full mb-2">List Your Business</Button>
+                  </Link>
                 </div>
               </nav>
             </div>
