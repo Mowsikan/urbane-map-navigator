@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import BookingModal from '@/components/BookingModal';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,8 @@ const Businesses = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedArea, setSelectedArea] = useState('All Areas');
+  const [selectedBusiness, setSelectedBusiness] = useState(null);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   const categories = ['All', 'Wedding Services', 'Home Services', 'Healthcare', 'Education', 'Food & Catering', 'Shopping', 'Professional Services', 'Tourism', 'Automotive', 'Beauty & Wellness'];
 
@@ -164,6 +166,16 @@ const Businesses = () => {
     return matchesSearch && matchesCategory && matchesArea;
   });
 
+  const handleBookNow = (business) => {
+    setSelectedBusiness(business);
+    setIsBookingModalOpen(true);
+  };
+
+  const handleCloseBookingModal = () => {
+    setIsBookingModalOpen(false);
+    setSelectedBusiness(null);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -291,8 +303,11 @@ const Businesses = () => {
 
                     <div className="text-primary font-bold mb-4">{business.price}</div>
                     
-                    <Button className="w-full">
-                      Connect & Book
+                    <Button 
+                      className="w-full"
+                      onClick={() => handleBookNow(business)}
+                    >
+                      Book Now
                     </Button>
                   </CardContent>
                 </Card>
@@ -311,6 +326,12 @@ const Businesses = () => {
       </main>
       
       <Footer />
+      
+      <BookingModal 
+        business={selectedBusiness}
+        isOpen={isBookingModalOpen}
+        onClose={handleCloseBookingModal}
+      />
     </div>
   );
 };
